@@ -46,5 +46,8 @@ jobs:
         run: dart analyze --fatal-infos
         if: always() && steps.install.outcome == 'success'
         
+      - name: Build jni dynamic libraries 
+        run: dart run jni:setup
+        
       - name: Run tests
         run: dart test
