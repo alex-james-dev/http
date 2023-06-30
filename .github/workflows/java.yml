@@ -8,10 +8,12 @@ on:
     paths:
       - 'pkgs/java_http/**'
       - 'pkgs/http_client_conformance_tests/**'
+      - '.github/workflows/java.yml'
   pull_request:
     paths:
       - 'pkgs/java_http/**'
       - 'pkgs/http_client_conformance_tests/**'
+      - '.github/workflows/java.yml'
   schedule:
     - cron: "0 0 * * 0"
     
