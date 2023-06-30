@@ -2,10 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+/// Library directives without comments or annotations should be avoided.
 library;
 
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:jni/jni.dart';
