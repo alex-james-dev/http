@@ -37,20 +37,15 @@ class JavaClient extends BaseClient {
       final httpUrlConnection = URL
           .ctor3(request.url.toString().toJString())
           .openConnection()
-          .castTo(HttpURLConnection.type, deleteOriginal: true);
-
-      // try {
-      //   httpUrlConnection.connect();
-      // } on Exception catch (e) {
-      //   print(e);
-      // }
+          .castTo(HttpURLConnection.type, deleteOriginal: true)
+        ..setRequestMethod(request.method.toJString());
 
       request.headers.forEach((headerName, headerValue) {
         httpUrlConnection.setRequestProperty(
             headerName.toJString(), headerValue.toJString());
       });
 
-      httpUrlConnection.setRequestMethod(request.method.toJString());
+      httpUrlConnection.connect();
 
       final statusCode = _statusCode(request, httpUrlConnection);
       final reasonPhrase = _reasonPhrase(httpUrlConnection);
