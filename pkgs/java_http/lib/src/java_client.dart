@@ -49,6 +49,7 @@ class JavaClient extends BaseClient {
         httpUrlConnection.connect();
       } on Exception catch (e) {
         print('Given url: ${request.url}');
+        print('Java: ${httpUrlConnection.getURL().toString1().toDartString()}');
         throw ClientException(e.toString(),
             Uri.parse(httpUrlConnection.getURL().toString1().toDartString()));
       }
