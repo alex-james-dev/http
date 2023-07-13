@@ -7,11 +7,36 @@ import 'package:java_http/java_http.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('java_http client conformance tests', () {
-    JavaClient().get(Uri.parse('https://www.google.com'));
-    // testResponseBody(JavaClient(), canStreamResponseBody: false);
-    // testResponseHeaders(JavaClient());
-    // testRequestHeaders(JavaClient());
-    // testMultipleClients(JavaClient.new);
+  // group('Google.com test', () {
+  //   final awesome = Awesome();
+
+  //   setUp(() {
+  //     // Additional setup goes here.
+  //   });
+
+  //   test('First test', () async {
+  //     final response =
+  //         await JavaClient().get(Uri.parse('https://www.google.com'));
+  //     print(response.statusCode);
+  //     print(response.body);
+  //   });
+  // });
+
+  test('Cat Fact Test', () async {
+    final client = JavaClient();
+    final response = await client.get(Uri.parse('https://catfact.ninja/fact'));
+
+    print('${response.statusCode} ${response.reasonPhrase}');
+    print('Response headers: ${response.headers}');
+    print('Response body: ${response.body}');
+
+    expect(response.statusCode, 200);
   });
+
+  // group('java_http client conformance tests', () {
+  //   testResponseBody(JavaClient(), canStreamResponseBody: false);
+  //   testResponseHeaders(JavaClient());
+  //   testRequestHeaders(JavaClient());
+  //   testMultipleClients(JavaClient.new);
+  // });
 }
