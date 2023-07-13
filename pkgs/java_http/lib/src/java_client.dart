@@ -48,7 +48,8 @@ class JavaClient extends BaseClient {
       try {
         httpUrlConnection.connect();
       } on Exception catch (e) {
-        print('Exception $e');
+        throw ClientException(e.toString(),
+            Uri.parse(httpUrlConnection.getURL().toString1().toDartString()));
       }
 
       final statusCode = _statusCode(request, httpUrlConnection);
