@@ -45,7 +45,11 @@ class JavaClient extends BaseClient {
             headerName.toJString(), headerValue.toJString());
       });
 
-      httpUrlConnection.connect();
+      try {
+        httpUrlConnection.connect();
+      } on Exception catch (e) {
+        print('Exception $e');
+      }
 
       final statusCode = _statusCode(request, httpUrlConnection);
       final reasonPhrase = _reasonPhrase(httpUrlConnection);
