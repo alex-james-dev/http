@@ -4,7 +4,7 @@
 
 import 'dart:io';
 import 'dart:isolate';
-//import 'dart:typed_data';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:jni/jni.dart';
@@ -32,7 +32,7 @@ class JavaClient extends BaseClient {
 
     final (statusCode, reasonPhrase, responseHeaders, responseBody) =
         await Isolate.run(() async {
-      //request.finalize();
+      request.finalize();
 
       final httpUrlConnection = URL
           .ctor3(request.url.toString().toJString())
@@ -45,37 +45,44 @@ class JavaClient extends BaseClient {
             headerName.toJString(), headerValue.toJString());
       });
 
-      final response = await Client().send(request);
-      return (
-        response.statusCode,
-        response.reasonPhrase,
-        response.headers,
-        await response.stream.toBytes(),
-      );
-
-      // try {
-      //   httpUrlConnection.connect();
-      // } on Exception catch (e) {
-      //   print('Given url: ${request.url}');
-      //   print
-      //('Java: ${httpUrlConnection.getURL().toString1().toDartString()}');
-      //   throw ClientException(e.toString(),
-      //       ri.parse(httpUrlConnection.getURL().toString1().toDartString()));
-      // }
-
-      // final statusCode = _statusCode(request, httpUrlConnection);
-      // final reasonPhrase = _reasonPhrase(httpUrlConnection);
-      // final responseHeaders = _responseHeaders(httpUrlConnection);
-      // final responseBody = _responseBody(httpUrlConnection);
-
-      // httpUrlConnection.disconnect();
-
+      final response =
+          await Client().send(Request(request.method, request.url));
+      print('IO Client status code: ${response.statusCode}');
+      print('IO Client response body: ${await response.stream.toBytes()}');
       // return (
-      //   statusCode,
-      //   reasonPhrase,
-      //   responseHeaders,
-      //   responseBody,
+      //   response.statusCode,
+      //   response.reasonPhrase,
+      //   response.headers,
+      //   await response.stream.toBytes(),
       // );
+
+      final response2 =
+          await Client().send(Request(request.method, request.url));
+      print('IO Client status code: ${response2.statusCode}');
+      print('IO Client response body: ${await response2.stream.toBytes()}');
+
+      try {
+        httpUrlConnection.connect();
+      } on Exception catch (e) {
+        print('Given url: ${request.url}');
+        print('Java: ${httpUrlConnection.getURL().toString1().toDartString()}');
+        throw ClientException(e.toString(),
+            Uri.parse(httpUrlConnection.getURL().toString1().toDartString()));
+      }
+
+      final statusCode = _statusCode(request, httpUrlConnection);
+      final reasonPhrase = _reasonPhrase(httpUrlConnection);
+      final responseHeaders = _responseHeaders(httpUrlConnection);
+      final responseBody = _responseBody(httpUrlConnection);
+
+      httpUrlConnection.disconnect();
+
+      return (
+        statusCode,
+        reasonPhrase,
+        responseHeaders,
+        responseBody,
+      );
     });
 
     final contentLengthHeader = responseHeaders['content-length'];
@@ -90,67 +97,66 @@ class JavaClient extends BaseClient {
         reasonPhrase: reasonPhrase);
   }
 
-  // int _statusCode(BaseRequest request, HttpURLConnection httpUrlConnection) {
-  //   final statusCode = httpUrlConnection.getResponseCode();
+  int _statusCode(BaseRequest request, HttpURLConnection httpUrlConnection) {
+    final statusCode = httpUrlConnection.getResponseCode();
 
-  //   if (statusCode == -1) {
-  //     throw ClientException(
-  //
-  //'Status code can not be discerned from the response.', request.url);
-  //   }
+    if (statusCode == -1) {
+      throw ClientException(
+          'Status code can not be discerned from the response.', request.url);
+    }
 
-  //   return statusCode;
-  // }
+    return statusCode;
+  }
 
-  // String? _reasonPhrase(HttpURLConnection httpUrlConnection) {
-  //   final reasonPhrase = httpUrlConnection.getResponseMessage();
+  String? _reasonPhrase(HttpURLConnection httpUrlConnection) {
+    final reasonPhrase = httpUrlConnection.getResponseMessage();
 
-  //   return reasonPhrase.isNull
-  //       ? null
-  //       : reasonPhrase.toDartString(deleteOriginal: true);
-  // }
+    return reasonPhrase.isNull
+        ? null
+        : reasonPhrase.toDartString(deleteOriginal: true);
+  }
 
-  // Map<String, String> _responseHeaders(HttpURLConnection httpUrlConnection) {
-  //   final headers = <String, List<String>>{};
+  Map<String, String> _responseHeaders(HttpURLConnection httpUrlConnection) {
+    final headers = <String, List<String>>{};
 
-  //   for (var i = 0;; i++) {
-  //     final headerName = httpUrlConnection.getHeaderFieldKey(i);
-  //     final headerValue = httpUrlConnection.getHeaderField1(i);
+    for (var i = 0;; i++) {
+      final headerName = httpUrlConnection.getHeaderFieldKey(i);
+      final headerValue = httpUrlConnection.getHeaderField1(i);
 
-  //     // If the header name and header value are both null then we have reached
-  //     // the end of the response headers.
-  //     if (headerName.isNull && headerValue.isNull) break;
+      // If the header name and header value are both null then we have reached
+      // the end of the response headers.
+      if (headerName.isNull && headerValue.isNull) break;
 
-  //     // The HTTP response header status line is returned as a header field
-  //     // where the field key is null and the field is the status line.
-  //     // Other package:http implementations don't include the status line as a
-  //     // header. So we don't add the status line to the headers.
-  //     if (headerName.isNull) continue;
+      // The HTTP response header status line is returned as a header field
+      // where the field key is null and the field is the status line.
+      // Other package:http implementations don't include the status line as a
+      // header. So we don't add the status line to the headers.
+      if (headerName.isNull) continue;
 
-  //     headers
-  //         .putIfAbsent(headerName.toDartString(), () => [])
-  //         .add(headerValue.toDartString());
-  //   }
+      headers
+          .putIfAbsent(headerName.toDartString(), () => [])
+          .add(headerValue.toDartString());
+    }
 
-  //   return headers
-  //       .map((key, value) => MapEntry(key.toLowerCase(), value.join(',')));
-  // }
+    return headers
+        .map((key, value) => MapEntry(key.toLowerCase(), value.join(',')));
+  }
 
-  // Uint8List _responseBody(HttpURLConnection httpUrlConnection) {
-  //   final responseCode = httpUrlConnection.getResponseCode();
+  Uint8List _responseBody(HttpURLConnection httpUrlConnection) {
+    final responseCode = httpUrlConnection.getResponseCode();
 
-  //   final inputStream = (responseCode >= 200 && responseCode <= 299)
-  //       ? httpUrlConnection.getInputStream()
-  //       : httpUrlConnection.getErrorStream();
+    final inputStream = (responseCode >= 200 && responseCode <= 299)
+        ? httpUrlConnection.getInputStream()
+        : httpUrlConnection.getErrorStream();
 
-  //   final bytes = <int>[];
-  //   int byte;
-  //   while ((byte = inputStream.read()) != -1) {
-  //     bytes.add(byte);
-  //   }
+    final bytes = <int>[];
+    int byte;
+    while ((byte = inputStream.read()) != -1) {
+      bytes.add(byte);
+    }
 
-  //   inputStream.close();
+    inputStream.close();
 
-  //   return Uint8List.fromList(bytes);
-  // }
+    return Uint8List.fromList(bytes);
+  }
 }
