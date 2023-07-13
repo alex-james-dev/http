@@ -32,7 +32,7 @@ class JavaClient extends BaseClient {
 
     final (statusCode, reasonPhrase, responseHeaders, responseBody) =
         await Isolate.run(() async {
-      request.finalize();
+      //request.finalize();
 
       final httpUrlConnection = URL
           .ctor3(request.url.toString().toJString())
