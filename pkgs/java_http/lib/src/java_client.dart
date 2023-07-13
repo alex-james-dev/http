@@ -31,7 +31,7 @@ class JavaClient extends BaseClient {
     _initJVM();
 
     final (statusCode, reasonPhrase, responseHeaders, responseBody) =
-        await Isolate.run(() {
+        await Isolate.run(() async {
       request.finalize();
 
       final httpUrlConnection = URL
@@ -45,28 +45,36 @@ class JavaClient extends BaseClient {
             headerName.toJString(), headerValue.toJString());
       });
 
-      try {
-        httpUrlConnection.connect();
-      } on Exception catch (e) {
-        print('Given url: ${request.url}');
-        print('Java: ${httpUrlConnection.getURL().toString1().toDartString()}');
-        throw ClientException(e.toString(),
-            Uri.parse(httpUrlConnection.getURL().toString1().toDartString()));
-      }
-
-      final statusCode = _statusCode(request, httpUrlConnection);
-      final reasonPhrase = _reasonPhrase(httpUrlConnection);
-      final responseHeaders = _responseHeaders(httpUrlConnection);
-      final responseBody = _responseBody(httpUrlConnection);
-
-      httpUrlConnection.disconnect();
-
+      final response = await Client().send(request);
       return (
-        statusCode,
-        reasonPhrase,
-        responseHeaders,
-        responseBody,
+        response.statusCode,
+        response.reasonPhrase,
+        response.headers,
+        await response.stream.toBytes(),
       );
+
+      // try {
+      //   httpUrlConnection.connect();
+      // } on Exception catch (e) {
+      //   print('Given url: ${request.url}');
+      //   print('Java: ${httpUrlConnection.getURL().toString1().toDartString()}');
+      //   throw ClientException(e.toString(),
+      //       Uri.parse(httpUrlConnection.getURL().toString1().toDartString()));
+      // }
+
+      // final statusCode = _statusCode(request, httpUrlConnection);
+      // final reasonPhrase = _reasonPhrase(httpUrlConnection);
+      // final responseHeaders = _responseHeaders(httpUrlConnection);
+      // final responseBody = _responseBody(httpUrlConnection);
+
+      // httpUrlConnection.disconnect();
+
+      // return (
+      //   statusCode,
+      //   reasonPhrase,
+      //   responseHeaders,
+      //   responseBody,
+      // );
     });
 
     final contentLengthHeader = responseHeaders['content-length'];
