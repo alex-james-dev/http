@@ -1,6 +1,7 @@
 // Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+import 'dart:io';
 
 import 'package:async/async.dart';
 import 'package:http/http.dart';
@@ -26,7 +27,12 @@ void testResponseBody(Client client,
     setUpAll(() async {
       httpServerChannel = await startServer();
       httpServerQueue = StreamQueue(httpServerChannel.stream);
+
+      final ipv6host = InternetAddress.loopbackIPv6.host;
+      //host = '[$ipv6host]:${await httpServerQueue.next}';
       host = 'localhost:${await httpServerQueue.next}';
+      print('Response body tests client address:');
+      (await InternetAddress.lookup('localhost')).forEach(print);
     });
     tearDownAll(() => httpServerChannel.sink.add(null));
 

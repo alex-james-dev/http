@@ -15,7 +15,7 @@ import 'package:stream_channel/stream_channel.dart';
 ///    When Receive Anything:
 ///     - exit
 void hybridMain(StreamChannel<Object?> channel) async {
-  final server = (await HttpServer.bind('127.0.0.1', 0))
+  final server = (await HttpServer.bind('localhost', 0))
     ..listen((request) async {
       const message = 'Hello World!';
       await request.drain<void>();
