@@ -63,5 +63,7 @@ jobs:
       - name: Build jni dynamic libraries
         run: dart run jni:setup
 
+      - run: cat /etc/hosts
+
       - name: Run tests
         run: dart test
