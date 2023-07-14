@@ -11,7 +11,7 @@ import 'package:jni/jni.dart';
 import 'package:path/path.dart';
 
 import 'third_party/java/net/HttpURLConnection.dart';
-import 'third_party/java/net/InetAddress.dart';
+//import 'third_party/java/net/InetAddress.dart';
 import 'third_party/java/net/URL.dart';
 
 // TODO: Add a description of the implementation.
@@ -49,9 +49,9 @@ class JavaClient extends BaseClient {
 
       httpUrlConnection.setRequestMethod(request.method.toJString());
 
-      final hostname = httpUrlConnection.getURL().getHost();
-      final ipAddress =
-          InetAddress.getByName(hostname).getHostAddress().toDartString();
+      // final hostname = httpUrlConnection.getURL().getHost();
+      // final ipAddress =
+      //     InetAddress.getByName(hostname).getHostAddress().toDartString();
       //print('Hostname: ${hostname.toDartString()}');
       //print('IP Address: $ipAddress');
 
