@@ -46,6 +46,9 @@ class JavaClient extends BaseClient {
 
       httpUrlConnection.setRequestMethod(request.method.toJString());
 
+      final hostname = httpUrlConnection.getURL().getHost().toDartString();
+      print('Hostname: $hostname');
+
       final statusCode = _statusCode(request, httpUrlConnection);
       final reasonPhrase = _reasonPhrase(httpUrlConnection);
       final responseHeaders = _responseHeaders(httpUrlConnection);
