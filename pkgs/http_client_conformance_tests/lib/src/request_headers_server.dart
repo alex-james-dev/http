@@ -19,26 +19,26 @@ import 'package:stream_channel/stream_channel.dart';
 void hybridMain(StreamChannel<Object?> channel) async {
   late HttpServer server;
 
-  server = (await HttpServer.bind('localhost', 0))
-    ..listen((request) async {
-      request.response.headers.set('Access-Control-Allow-Origin', '*');
-      if (request.method == 'OPTIONS') {
-        // Handle a CORS preflight request:
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
-        request.response.headers
-          ..set('Access-Control-Allow-Methods', 'GET')
-          ..set('Access-Control-Allow-Headers', '*');
-      } else {
-        final headers = <String, List<String>>{};
-        request.headers.forEach((field, value) {
-          headers[field] = value;
-        });
-        channel.sink.add(headers);
-      }
-      unawaited(request.response.close());
-    });
-
+  server = (await HttpServer.bind('localhost', 0));
   print('Rquest headers server address: ${server.address}');
+
+  server.listen((request) async {
+    request.response.headers.set('Access-Control-Allow-Origin', '*');
+    if (request.method == 'OPTIONS') {
+      // Handle a CORS preflight request:
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#preflighted_requests
+      request.response.headers
+        ..set('Access-Control-Allow-Methods', 'GET')
+        ..set('Access-Control-Allow-Headers', '*');
+    } else {
+      final headers = <String, List<String>>{};
+      request.headers.forEach((field, value) {
+        headers[field] = value;
+      });
+      channel.sink.add(headers);
+    }
+    unawaited(request.response.close());
+  });
 
   channel.sink.add(server.port);
   await channel
