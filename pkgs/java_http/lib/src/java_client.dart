@@ -31,44 +31,20 @@ class JavaClient extends BaseClient {
     _initJVM();
 
     final (statusCode, reasonPhrase, responseHeaders, responseBody) =
-        await Isolate.run(() async {
+        await Isolate.run(() {
       request.finalize();
 
       final httpUrlConnection = URL
           .ctor3(request.url.toString().toJString())
           .openConnection()
-          .castTo(HttpURLConnection.type, deleteOriginal: true)
-        ..setRequestMethod(request.method.toJString());
+          .castTo(HttpURLConnection.type, deleteOriginal: true);
 
       request.headers.forEach((headerName, headerValue) {
         httpUrlConnection.setRequestProperty(
             headerName.toJString(), headerValue.toJString());
       });
 
-      final response =
-          await Client().send(Request(request.method, request.url));
-      print('IO Client status code: ${response.statusCode}');
-      print('IO Client response body: ${await response.stream.toBytes()}');
-      // return (
-      //   response.statusCode,
-      //   response.reasonPhrase,
-      //   response.headers,
-      //   await response.stream.toBytes(),
-      // );
-
-      final response2 =
-          await Client().send(Request(request.method, request.url));
-      print('IO Client status code: ${response2.statusCode}');
-      print('IO Client response body: ${await response2.stream.toBytes()}');
-
-      try {
-        httpUrlConnection.connect();
-      } on Exception catch (e) {
-        print('Given url: ${request.url}');
-        print('Java: ${httpUrlConnection.getURL().toString1().toDartString()}');
-        throw ClientException(e.toString(),
-            Uri.parse(httpUrlConnection.getURL().toString1().toDartString()));
-      }
+      httpUrlConnection.setRequestMethod(request.method.toJString());
 
       final statusCode = _statusCode(request, httpUrlConnection);
       final reasonPhrase = _reasonPhrase(httpUrlConnection);
