@@ -54,6 +54,8 @@ class JavaClient extends BaseClient {
           InetAddress.getByName(hostname).getHostAddress().toDartString();
       //print('Hostname: ${hostname.toDartString()}');
       print('Java IP Address: $ipAddress');
+      print(
+          'Java Localhost: ${InetAddress.getLocalHost().getHostAddress().toDartString()}');
 
       final statusCode = _statusCode(request, httpUrlConnection);
       final reasonPhrase = _reasonPhrase(httpUrlConnection);
