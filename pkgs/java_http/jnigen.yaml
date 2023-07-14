@@ -14,5 +14,6 @@ class_path:
 classes:
   - 'java.io.InputStream'
   - 'java.net.HttpURLConnection'
+  - 'java.net.InetAddress'
   - 'java.net.URL'
   - 'java.net.URLConnection'
