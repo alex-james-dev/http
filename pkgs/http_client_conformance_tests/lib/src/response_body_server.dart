@@ -29,6 +29,8 @@ void hybridMain(StreamChannel<Object?> channel) async {
       await request.response.close();
     });
 
+  print('Response body server address: ${server.address}');
+
   channel.sink.add(server.port);
   await channel
       .stream.first; // Any writes indicates that the server should exit.
