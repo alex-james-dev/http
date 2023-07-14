@@ -31,6 +31,8 @@ class JavaClient extends BaseClient {
     // See https://github.com/dart-lang/http/pull/980#discussion_r1253700470.
     _initJVM();
 
+    //print('Dart Loopback IPv6: ${InternetAddress.loopbackIPv6}');
+
     final (statusCode, reasonPhrase, responseHeaders, responseBody) =
         await Isolate.run(() {
       request.finalize();
@@ -50,8 +52,8 @@ class JavaClient extends BaseClient {
       final hostname = httpUrlConnection.getURL().getHost();
       final ipAddress =
           InetAddress.getByName(hostname).getHostAddress().toDartString();
-      print('Hostname: ${hostname.toDartString()}');
-      print('IP Address: $ipAddress');
+      //print('Hostname: ${hostname.toDartString()}');
+      //print('IP Address: $ipAddress');
 
       final statusCode = _statusCode(request, httpUrlConnection);
       final reasonPhrase = _reasonPhrase(httpUrlConnection);
